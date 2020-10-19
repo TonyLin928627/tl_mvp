@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/title_back_btn_action_bar_layout"
+    style="@style/toolbar_back_title">
+
+    <ImageView
+        android:id="@+id/actionbar_start"
+        style="@style/toolbar_back_arrow"
+        android:contentDescription="@string/back" />
+
+    <TextView
+        android:id="@+id/actionbar_centre"
+        style="@style/toolbar_title"
+        tools:text="Title"/>
+
+    <ImageView
+        android:id="@+id/actionbar_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+</RelativeLayout>
+
