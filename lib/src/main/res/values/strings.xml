@@ -1,0 +1,10 @@
+<resources>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Okay</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="try_again">Try Again</string>
+    <string name="version">Ver.</string>
+    <string name="back">Back</string>
+    <string name="sign_out">Sign Out</string>
+</resources>
