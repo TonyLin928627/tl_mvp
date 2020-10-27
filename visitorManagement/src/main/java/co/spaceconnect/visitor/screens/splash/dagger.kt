@@ -1,9 +1,11 @@
 package co.spaceconnect.visitor.screens.splash
 
+import co.spaceconnect.visitor.AppComponent
 import co.spaceconnect.visitor.SignInDataBridge
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import io.tl.mvp.lib.DataBridge
 import io.tl.mvp.lib.MvpModel
 import io.tl.mvp.lib.MvpPresenter
 import javax.inject.Scope
@@ -13,7 +15,7 @@ import javax.inject.Scope
 annotation class SplashScope
 
 @SplashScope
-@Component(modules = [SplashModule::class])
+@Component(modules = [SplashModule::class], dependencies = [AppComponent::class])
 interface SplashComponent {
     fun inject(activity: SplashActivity)
 }
@@ -22,7 +24,7 @@ interface SplashComponent {
 class SplashModule(private val activity: SplashActivity) {
     @Provides
     @SplashScope
-    fun presenter(view: SplashView, model: SplashModel): MvpPresenter {
+    fun presenter(view: SplashView, model: SplashModel): MvpPresenter<SignInDataBridge> {
         return SplashPresenter(view, model, activity)
     }
 
@@ -34,8 +36,7 @@ class SplashModule(private val activity: SplashActivity) {
 
     @Provides
     @SplashScope
-    fun model(): SplashModel {
-        return SplashModel(SignInDataBridge())
+    fun model(signInDataBridge: SignInDataBridge): SplashModel {
+        return SplashModel(signInDataBridge)
     }
-
 }

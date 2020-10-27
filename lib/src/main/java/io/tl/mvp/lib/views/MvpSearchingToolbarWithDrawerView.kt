@@ -10,7 +10,7 @@ abstract class MvpSearchingToolbarWithDrawerView(menuItemsAdapter: MenuItemsAdap
     SearchingToolbar {
 
 
-    override fun getContext(): Context = this.mvpActivity as Context
+//    override fun getContext(): Context = this.mvpActivity as Context
 
     override val searchEventsPublishSubject =
         PublishSubject.create<Pair<SearchingToolbar.SearchEvent, Any?>>()

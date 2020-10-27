@@ -8,17 +8,16 @@ import android.os.PersistableBundle
 import android.view.KeyEvent
 import javax.inject.Inject
 
-abstract class MvpActivity: AppCompatActivity() {
+abstract class MvpActivity<T: DataBridge>: AppCompatActivity() {
 
     @Inject
     @JvmField
-    var presenter: MvpPresenter?= null
+    var presenter: MvpPresenter<T>?= null
 
     abstract var doInject: ()->Unit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//		this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         doInject()
         presenter!!.onCreate(savedInstanceState)
     }

@@ -28,7 +28,7 @@ abstract class MvpToolbarWithDrawerView(override val menuItemsAdapter: MenuItems
         this.screenContainer.findViewById(R2.id.app_bar)
     }
 
-    override fun getContext() = this.mvpActivity as Context
+//    override fun getContext() = this.mvpActivity as Context
 
     @BindView(R2.id.drawer_layout)
     override lateinit var drawerLayout: DrawerLayout
@@ -61,7 +61,8 @@ abstract class MvpToolbarWithDrawerView(override val menuItemsAdapter: MenuItems
     @SuppressLint("MissingSuperCall")
     override fun initViews(){
         inflateView(this, contentLayoutId)
-        initDrawer(activity = mvpActivity!!, menuItemsAdapter =  menuItemsAdapter)
+
+        initDrawer(context = getContext(), menuItemsAdapter =  menuItemsAdapter)
     }
 
 }
