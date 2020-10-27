@@ -18,9 +18,9 @@ abstract class MvpToolbarWithoutDrawerView :  MvpView(), Toolbar {
         this.screenContainer.findViewById<AppBarLayout>(R.id.app_bar)
     }
 
-    override fun getContext(): Context {
-        return this.mvpActivity as Context
-    }
+//    override fun getContext(): Context {
+//        return this.mvpActivity as Context
+//    }
 
     @BindView(R2.id.actionbar_start)
     override lateinit var toolbarStartButton: ImageView

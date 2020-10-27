@@ -9,7 +9,9 @@ import io.reactivex.Single
 import io.tl.mvp.lib.menu.MenuItem
 
 //base model definitions
-abstract class MvpModel(protected val dataBridge: DataBridge){
+abstract class MvpModel<out O: DataBridge, in I: O>(dataBridge: I){
+
+    protected val dataBridge: O = dataBridge
 
     fun isConnectedToNetwork(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

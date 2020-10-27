@@ -4,12 +4,18 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import co.spaceconnect.visitor.App
 import co.spaceconnect.visitor.R
+import co.spaceconnect.visitor.SignInDataBridge
+import io.tl.mvp.lib.MvpActivity
 
-class LoginActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.screen_login)
+class LoginActivity : MvpActivity<SignInDataBridge>() {
+
+    override var doInject = {
+        DaggerLoginComponent.builder()
+            .appComponent(App.appComponent)
+            .loginModule(LoginModule(this))
+            .build().inject(this)
     }
 
     companion object {
@@ -22,4 +28,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

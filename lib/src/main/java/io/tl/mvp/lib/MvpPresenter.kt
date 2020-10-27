@@ -1,5 +1,6 @@
 package io.tl.mvp.lib
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -18,11 +19,11 @@ import io.tl.mvp.lib.toolbar.Toolbar
 import io.tl.mvp.lib.toolbar.ToolbarWithDrawer
 
 //region base presenter definitions
-abstract class MvpPresenter{
+abstract class MvpPresenter<T : DataBridge>{
 
     abstract val mvpView: MvpView
-    abstract val mvpModel:  MvpModel
-    abstract val activity: MvpActivity
+    abstract val mvpModel:  MvpModel<T, T>
+    abstract val activity: MvpActivity<T>
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -38,13 +39,17 @@ abstract class MvpPresenter{
         onBackPressed()
     }
 
-    //	@CallSuper
+    @CallSuper
     open fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {}
+
+    private fun getContext(): Context {
+        return this.activity
+    }
 
     @CallSuper
     open fun onCreate(savedInstanceState: Bundle?){
 
-        mvpView.doInit(activity)
+        mvpView.doInit(getContext = this::getContext)
 
         activity.let { theActivity ->
             theActivity.setContentView(mvpView.screenContainer)

@@ -1,5 +1,6 @@
 package io.tl.mvp.lib.views
 
+import android.content.Context
 import androidx.appcompat.widget.SearchView
 import io.reactivex.subjects.PublishSubject
 import io.tl.mvp.lib.toolbar.SearchingToolbar

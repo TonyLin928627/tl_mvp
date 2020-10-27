@@ -3,6 +3,8 @@ package co.spaceconnect.visitor.screens.splash
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.widget.TextView
 import androidx.annotation.IntDef
 import butterknife.BindView
@@ -34,11 +36,12 @@ const val ENTRY_TO_MAIN_SCREEN = 3
 annotation class ScreenEntry
 
 private const val TAG = "SplashScreen"
-class SplashModel(dataBridge: SignInDataBridge): MvpModel(dataBridge){
+class SplashModel(dataBridge: SignInDataBridge): MvpModel<SignInDataBridge, SignInDataBridge>(dataBridge) {
 
-    fun getEntry(context: Context): Single<ScreenEntryMethod> {
 
-        return (dataBridge as SignInDataBridge).getSignInStatus().flatMap {entry->
+    fun getEntry(): Single<ScreenEntryMethod> {
+
+        return (dataBridge).getSignInStatus().flatMap {entry->
             when (entry) {
                 ENTRY_TO_LOGIN_SCREEN -> {
                     Single.just<ScreenEntryMethod>(LoginActivity.Companion::start)
@@ -55,6 +58,7 @@ class SplashModel(dataBridge: SignInDataBridge): MvpModel(dataBridge){
         }
     }
 
+
 }
 //endregion
 
@@ -62,16 +66,14 @@ class SplashModel(dataBridge: SignInDataBridge): MvpModel(dataBridge){
 class SplashView : MvpView(){
     override val contentLayoutId = layout.screen_splash
 
-    @BindView(R.id.appInfoTv)
+    @BindView(id.appInfoTv)
     lateinit var appInfoTv: TextView
 
     override fun initViews() {
         super.initViews()
 
         ButterKnife.bind(this, screenContainer)
-        mvpActivity?.let { context->
-            appInfoTv.displayBuildInfo(context)
-        }
+        appInfoTv.displayBuildInfo(getContext())
 
     }
 }
@@ -79,10 +81,10 @@ class SplashView : MvpView(){
 //endregion
 
 //region presenter
-private const val MIN_DISPLAY_TIME = 5L
+private const val MIN_DISPLAY_TIME = 3L
 class SplashPresenter(override val mvpView: SplashView,
                       override val mvpModel: SplashModel,
-                      override val activity: SplashActivity) : MvpPresenter(){
+                      override val activity: SplashActivity) : MvpPresenter<SignInDataBridge>(){
 
     override val allObservables = emptyList<Disposable>()
 
@@ -93,7 +95,7 @@ class SplashPresenter(override val mvpView: SplashView,
         val minThreeSecondsSingle = Single.timer(MIN_DISPLAY_TIME, TimeUnit.SECONDS)
 
         val disposable = Single.zip(
-            mvpModel.getEntry(activity), minThreeSecondsSingle,
+            mvpModel.getEntry(), minThreeSecondsSingle,
             { screenEntry, _ -> screenEntry}
         )
             .subscribeOn(Schedulers.io())

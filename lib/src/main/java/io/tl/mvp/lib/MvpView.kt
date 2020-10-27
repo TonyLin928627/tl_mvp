@@ -4,6 +4,7 @@ package io.tl.mvp.lib
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
@@ -22,14 +23,19 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
+import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 //region base view definitions
 abstract class MvpView{
 
-    protected var mvpActivity: MvpActivity? = null
+    private lateinit var weakContext : WeakReference<(Context)>
 
+    public fun getContext(): Context{
+        return weakContext.get()!!
+    }
+    
     private val disposables = CompositeDisposable()
 
     protected fun addDisposable(vararg d: Disposable){
@@ -44,21 +50,19 @@ abstract class MvpView{
 
     @CallSuper
     protected open fun initViews(){
-        screenContainer = FrameLayout(mvpActivity!!)
-        View.inflate(mvpActivity, contentLayoutId, screenContainer)
+        screenContainer = FrameLayout(weakContext.get()!!)
+        View.inflate(weakContext.get()!!, contentLayoutId, screenContainer)
 
         ButterKnife.bind(this, screenContainer)
-
-
     }
 
     internal fun doDeinit(){
         disposables.clear()
-        this.mvpActivity = null
+
     }
 
-    fun doInit(mvpActivity: MvpActivity) {
-        this.mvpActivity = mvpActivity
+    fun doInit(getContext : (()->Context)) {
+        weakContext = WeakReference(getContext.invoke())
         //Inflate the layout into the viewGroup
         initViews()
 
@@ -76,13 +80,13 @@ abstract class MvpView{
     //a loading hub.  which cannot be dismissed/closed/hidden by the user
     private var loadingDialog: ProgressDialog? = null
 
-    fun showLoading(title:String? = null, msg: String? ="Please wait..."){
+    fun showLoading( title:String? = null, msg: String? ="Please wait..."){
         screenContainer.post{
             hideDialog()
             hideProgress()
 
             if(loadingDialog==null) {
-                loadingDialog = ProgressDialog.show(mvpActivity, title, msg, true)
+                loadingDialog = ProgressDialog.show(weakContext.get()!!, title, msg, true)
             }
         }
 
@@ -111,11 +115,11 @@ abstract class MvpView{
     /**
      * show a dialog with "Okay" and "Cancel" buttons
      */
-    fun showAlertMsg(alertTitle:String, alertMsg: String?=null, onButtonClicked: ((yesOrNo: Boolean)->Unit)? = null){
+    fun showAlertMsg( alertTitle:String, alertMsg: String?=null, onButtonClicked: ((yesOrNo: Boolean)->Unit)? = null){
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(mvpActivity)
+            dialog = AlertDialog.Builder(weakContext.get()!!)
                 .setTitle(alertTitle)
                 .setMessage(alertMsg)
                 .setCancelable(true)
@@ -129,11 +133,11 @@ abstract class MvpView{
     /**
      * show a dialog with "Yes" and "No" buttons
      */
-    fun showWarningMsg(warningTitle: String, warningMsg: String, onYesOrNoClicked: ((yesOrNo: Boolean)->Unit)? = null){
+    fun showWarningMsg( warningTitle: String, warningMsg: String, onYesOrNoClicked: ((yesOrNo: Boolean)->Unit)? = null){
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(mvpActivity)
+            dialog = AlertDialog.Builder(weakContext.get()!!)
                 .setTitle(warningTitle)
                 .setMessage(warningMsg)
                 .setCancelable(true)
@@ -144,11 +148,11 @@ abstract class MvpView{
         }
     }
 
-    fun showWarningMsg(warningMsg: String, onYesOrNoClicked: ((yesOrNo: Boolean)->Unit)? = null){
+    fun showWarningMsg( warningMsg: String, onYesOrNoClicked: ((yesOrNo: Boolean)->Unit)? = null){
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(mvpActivity)
+            dialog = AlertDialog.Builder(weakContext.get()!!)
                 .setTitle("WARNING")
                 .setMessage(warningMsg)
                 .setCancelable(true)
@@ -168,51 +172,51 @@ abstract class MvpView{
     /**
      * Show a dialog with a "Okay" button
      */
-    fun showErrorMsg(throwable: Throwable, onBtnClicked: (()->Unit)? = null ){
+    fun showErrorMsg( throwable: Throwable, onBtnClicked: (()->Unit)? = null ){
 
         screenContainer.post {
-            var errTitle = ""
-            var errMsg = getErrMsgFromThrowable(throwable)
-            var btnMsgId = R.string.ok
-            var cancelable = true
+            val errTitle = ""
+            val errMsg = getErrMsgFromThrowable(throwable)
+            val btnMsgId = R.string.ok
+            val cancelable = true
 
             val action =  onBtnClicked
 
-            showErrorMsgWithTitle( errTitle, errMsg = errMsg, btnMsgId = btnMsgId, cancelable = cancelable, onBtnClicked = action)
+            showErrorMsgWithTitle(errTitle, errMsg = errMsg, btnMsgId = btnMsgId, cancelable = cancelable, onBtnClicked = action)
         }
     }
 
     /**
      * Show a dialog with a "Okay" button
      */
-    fun showErrorMsg(msg: String?, throwable: Throwable, onBtnClicked: (()->Unit)? = null ){
+    fun showErrorMsg( msg: String?, throwable: Throwable, onBtnClicked: (()->Unit)? = null ){
 
         screenContainer.post {
-            var errTitle = ""
-            var errMsg = msg?.takeIf { it != null } ?: getErrMsgFromThrowable(throwable)
-            var btnMsgId = R.string.ok
-            var cancelable = true
+            val errTitle = ""
+            val errMsg = msg ?: getErrMsgFromThrowable(throwable)
+            val btnMsgId = R.string.ok
+            val cancelable = true
             val action =    onBtnClicked
 
-            showErrorMsgWithTitle( errTitle, errMsg = errMsg, btnMsgId = btnMsgId, cancelable = cancelable, onBtnClicked = action)
+            showErrorMsgWithTitle(errTitle, errMsg = errMsg, btnMsgId = btnMsgId, cancelable = cancelable, onBtnClicked = action)
         }
     }
 
     /**
      * Show a dialog with a  button
      */
-    fun showErrorMsg(errMsgResId: Int, btnMsgId: Int, onBtnClicked: (()->Unit)? = null ){
+    fun showErrorMsg(  errMsgResId: Int, btnMsgId: Int, onBtnClicked: (()->Unit)? = null ){
 
         screenContainer.post {
-            showErrorMsgWithTitle( errTitle="", errMsgId = errMsgResId, btnMsgId = btnMsgId, onBtnClicked = onBtnClicked)
+            showErrorMsgWithTitle(errTitle="", errMsgId = errMsgResId, btnMsgId = btnMsgId, onBtnClicked = onBtnClicked)
         }
     }
 
-    fun showErrorMsgWithTitle(errTitleId: Int, errMsg: String?=null, btnMsgId: Int = R.string.ok, onBtnClicked: (()->Unit)? = null ){
+    fun showErrorMsgWithTitle( errTitleId: Int, errMsg: String?=null, btnMsgId: Int = R.string.ok, onBtnClicked: (()->Unit)? = null ){
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(mvpActivity)
+            dialog = AlertDialog.Builder(weakContext.get()!!)
                 .setTitle(errTitleId)
                 .setMessage(errMsg)
                 .setCancelable(true)
@@ -222,12 +226,12 @@ abstract class MvpView{
         }
     }
 
-    fun showMsgWithTitle(errTitleId: Int, errMsgId: Int, btnMsgId: Int, onBtnClicked: (()->Unit)? = null ){
+    fun showMsgWithTitle( errTitleId: Int, errMsgId: Int, btnMsgId: Int, onBtnClicked: (()->Unit)? = null ){
 
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(mvpActivity)
+            dialog = AlertDialog.Builder(weakContext.get()!!)
                 .setTitle(errTitleId)
                 .setMessage(errMsgId)
                 .setCancelable(false)
@@ -237,11 +241,11 @@ abstract class MvpView{
         }
     }
 
-    fun showErrorMsgWithTitle(errTitle:String, errMsg: String?=null, btnMsgId: Int = R.string.ok, cancelable: Boolean = true, onBtnClicked: (()->Unit)? = null ){
+    fun showErrorMsgWithTitle( errTitle:String, errMsg: String?=null, btnMsgId: Int = R.string.ok, cancelable: Boolean = true, onBtnClicked: (()->Unit)? = null ){
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(mvpActivity)
+            dialog = AlertDialog.Builder(weakContext.get()!!)
                 .setTitle(errTitle)
                 .setMessage(errMsg)
                 .setCancelable(cancelable)
@@ -251,11 +255,11 @@ abstract class MvpView{
         }
     }
 
-    fun showErrorMsgWithTitle(errTitle:String, errMsgId: Int, btnMsgId: Int = R.string.ok, onBtnClicked: (()->Unit)? = null ) {
+    fun showErrorMsgWithTitle( errTitle:String, errMsgId: Int, btnMsgId: Int = R.string.ok, onBtnClicked: (()->Unit)? = null ) {
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(mvpActivity)
+            dialog = AlertDialog.Builder(weakContext.get()!!)
                 .setTitle(errTitle)
                 .setMessage(errMsgId)
                 .setCancelable(true)
@@ -265,7 +269,7 @@ abstract class MvpView{
         }
     }
 
-    fun showErrorMsgAndTryAgain(throwable: Throwable, cancelable: Boolean = true,  onTryAgainClicked: (()->Unit)){
+    fun showErrorMsgAndTryAgain( throwable: Throwable, cancelable: Boolean = true,  onTryAgainClicked: (()->Unit)){
         hideAllDialogs()
 
         screenContainer.post {
@@ -312,17 +316,17 @@ abstract class MvpView{
         }
 
     }
-    fun showProgress(from: Int, to: Int, max: Int, duration: Long, completion: (()->Unit)? = null){
+    fun showProgress(activity: Activity, from: Int, to: Int, max: Int, duration: Long, completion: (()->Unit)? = null){
         hideLoading()
         hideDialog()
 
         screenContainer.post {
 
             if (progressDialog == null){
-                mvpActivity!!.window
-                val view = LayoutInflater.from(mvpActivity).inflate(R.layout.dialog_progress_bar, null)
+                activity.window
+                val view = LayoutInflater.from(activity).inflate(R.layout.dialog_progress_bar, null)
                 progressBar = view as ProgressBar
-                progressDialog = AlertDialog.Builder(mvpActivity)
+                progressDialog = AlertDialog.Builder(activity)
                     .setView(view)
                     .setCancelable(false)
                     .setOnDismissListener {
@@ -351,11 +355,10 @@ abstract class MvpView{
 
 
     //endregion
-
-    fun hideKeyboard() {
-        mvpActivity?.let{ theContext->
+    fun hideKeyboard(activity: Activity) {
+        activity.let{ theContext->
             theContext.currentFocus?.let {currentFocus->
-                hideKeyboard()
+                hideKeyboard(activity)
             }
         }
 
@@ -377,7 +380,7 @@ fun TextView.displayBuildInfo(appName: String, versionName: String, versionCode:
     val backendStr = backend?.let { it->"_$it".toUpperCase(Locale.ROOT)} ?: ""
 
     this.text = "${appName}  ${versionName}\n" +
-            "${context.getString(R.string.version)} : ${versionCode}\n${flavor?.toUpperCase() ?: ""} ${backendStr}}"
+            "${context.getString(R.string.version)} : ${versionCode}\n${flavor?.toUpperCase(Locale.ROOT) ?: ""} ${backendStr}}"
 }
 
 fun EditText.capitalizeInputText(textWatcher: TextWatcher? = null){

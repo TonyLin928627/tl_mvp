@@ -1,5 +1,6 @@
 package io.tl.mvp.lib.toolbar
 
+import android.content.Context
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.GravityCompat
@@ -11,6 +12,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import io.tl.mvp.lib.DataBridge
 import io.tl.mvp.lib.menu.MenuItem
 import io.tl.mvp.lib.menu.MenuItemsAdapter
 import io.tl.mvp.lib.MvpActivity
@@ -46,7 +48,7 @@ interface ToolbarWithDrawer: Toolbar {
 
     var onMenuItemClicked: Observable<MenuItem>
 
-    fun initDrawer(activity: MvpActivity, menuItemsAdapter: MenuItemsAdapter) {
+    fun initDrawer(context: Context, menuItemsAdapter: MenuItemsAdapter) {
 
         onMenuItemClicked = menuItemsAdapter.clickSubject.doOnNext {closeDrawer()}
 
@@ -54,7 +56,7 @@ interface ToolbarWithDrawer: Toolbar {
             closeDrawer()
         }
 
-        itemRv.layoutManager = LinearLayoutManager(activity)
+        itemRv.layoutManager = LinearLayoutManager(context)
         itemRv.adapter = menuItemsAdapter
 
 //        with(activity.resources){
