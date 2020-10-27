@@ -31,10 +31,7 @@ import java.util.concurrent.TimeUnit
 //region model
 
 private const val TAG = "LoginScreen"
-class LoginModel(dataBridge: SignInDataBridge): MvpModel<SignInDataBridge, SignInDataBridge>(dataBridge) {
-
-    
-
+class LoginModel(dataBridge: SignInDataBridge): MvpModel<SignInDataBridge>(dataBridge) {
 
 }
 //endregion

@@ -58,7 +58,6 @@ abstract class MvpView{
 
     internal fun doDeinit(){
         disposables.clear()
-
     }
 
     fun doInit(getContext : (()->Context)) {

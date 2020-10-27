@@ -22,7 +22,7 @@ import io.tl.mvp.lib.toolbar.ToolbarWithDrawer
 abstract class MvpPresenter<T : DataBridge>{
 
     abstract val mvpView: MvpView
-    abstract val mvpModel:  MvpModel<T, T>
+    abstract val mvpModel:  MvpModel<T>
     abstract val activity: MvpActivity<T>
 
     private val compositeDisposable = CompositeDisposable()

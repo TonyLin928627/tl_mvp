@@ -36,7 +36,7 @@ const val ENTRY_TO_MAIN_SCREEN = 3
 annotation class ScreenEntry
 
 private const val TAG = "SplashScreen"
-class SplashModel(dataBridge: SignInDataBridge): MvpModel<SignInDataBridge, SignInDataBridge>(dataBridge) {
+class SplashModel(dataBridge: SignInDataBridge): MvpModel<SignInDataBridge>(dataBridge) {
 
 
     fun getEntry(): Single<ScreenEntryMethod> {
