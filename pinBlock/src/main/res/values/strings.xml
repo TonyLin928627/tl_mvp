@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">pin block</string>
+    <string name="enter_pin_here">Enter a 4~12 digits pin here</string>
+    <string name="pan">HARD CODED PAN:</string>
+    <string name="compute">Compute</string>
+    <string name="invalid_data">Invalid Data</string>
+</resources>

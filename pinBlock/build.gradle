@@ -5,13 +5,12 @@ plugins {
     id 'kotlin-android-extensions'
 }
 
-
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "co.spaceconnect.visitor"
+        applicationId "io.tl.mvp.pinblock"
         minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
@@ -33,49 +32,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    def backend = "backend"
-    def brand = "brand"
-    flavorDimensions brand, backend
-
-    productFlavors {
-        def app_id_suffix_dev = ".dev"
-
-        spaceConnect {
-            dimension brand
-
-            sourceSets {
-                spaceConnect {
-                    res.srcDirs = ['src/spaceConnect/res']
-                }
-            }
-
-        }
-
-        evoko {
-            dimension brand
-
-            sourceSets {
-                evoko {
-                    res.srcDirs = ['src/evoko/res']
-                }
-            }
-
-        }
-
-        dev {
-            dimension backend
-            applicationIdSuffix app_id_suffix_dev
-            versionNameSuffix "-dev"
-//            manifestPlaceholders = [APPCENTER_APP_ID: "c0912470-7106-4758-b2cc-1b3225bbfe2c", 'appAuthRedirectScheme': 'com.smartspaceplc.smartspace.dev']
-        }
-
-        prod {
-            dimension backend
-            versionNameSuffix ""
-//            manifestPlaceholders = [APPCENTER_APP_ID: "d1724f9a-82e7-4103-bc8c-a1dcd6f9e642", 'appAuthRedirectScheme': 'com.smartspaceplc.smartspace']
-        }
-    }
 }
 
 dependencies {
@@ -86,11 +42,11 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation project(path: ':lib')
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.daimajia.androidanimations:library:2.4@aar'
 
     kapt 'com.google.dagger:dagger-compiler:2.29.1'
     kapt 'com.jakewharton:butterknife-compiler:10.2.3'
