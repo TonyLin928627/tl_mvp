@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.CallSuper
 import butterknife.ButterKnife
@@ -50,8 +51,8 @@ abstract class MvpView{
 
     @CallSuper
     protected open fun initViews(){
-        screenContainer = FrameLayout(weakContext.get()!!)
-        View.inflate(weakContext.get()!!, contentLayoutId, screenContainer)
+        screenContainer = FrameLayout(getContext())
+        View.inflate(getContext(), contentLayoutId, screenContainer)
 
         ButterKnife.bind(this, screenContainer)
     }
@@ -85,7 +86,7 @@ abstract class MvpView{
             hideProgress()
 
             if(loadingDialog==null) {
-                loadingDialog = ProgressDialog.show(weakContext.get()!!, title, msg, true)
+                loadingDialog = ProgressDialog.show(getContext(), title, msg, true)
             }
         }
 
@@ -118,7 +119,7 @@ abstract class MvpView{
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(weakContext.get()!!)
+            dialog = AlertDialog.Builder(getContext())
                 .setTitle(alertTitle)
                 .setMessage(alertMsg)
                 .setCancelable(true)
@@ -136,7 +137,7 @@ abstract class MvpView{
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(weakContext.get()!!)
+            dialog = AlertDialog.Builder(getContext())
                 .setTitle(warningTitle)
                 .setMessage(warningMsg)
                 .setCancelable(true)
@@ -151,7 +152,7 @@ abstract class MvpView{
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(weakContext.get()!!)
+            dialog = AlertDialog.Builder(getContext())
                 .setTitle("WARNING")
                 .setMessage(warningMsg)
                 .setCancelable(true)
@@ -215,7 +216,7 @@ abstract class MvpView{
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(weakContext.get()!!)
+            dialog = AlertDialog.Builder(getContext())
                 .setTitle(errTitleId)
                 .setMessage(errMsg)
                 .setCancelable(true)
@@ -230,7 +231,7 @@ abstract class MvpView{
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(weakContext.get()!!)
+            dialog = AlertDialog.Builder(getContext())
                 .setTitle(errTitleId)
                 .setMessage(errMsgId)
                 .setCancelable(false)
@@ -244,7 +245,7 @@ abstract class MvpView{
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(weakContext.get()!!)
+            dialog = AlertDialog.Builder(getContext())
                 .setTitle(errTitle)
                 .setMessage(errMsg)
                 .setCancelable(cancelable)
@@ -258,7 +259,7 @@ abstract class MvpView{
         hideAllDialogs()
 
         screenContainer.post {
-            dialog = AlertDialog.Builder(weakContext.get()!!)
+            dialog = AlertDialog.Builder(getContext())
                 .setTitle(errTitle)
                 .setMessage(errMsgId)
                 .setCancelable(true)
@@ -355,9 +356,10 @@ abstract class MvpView{
 
     //endregion
     fun hideKeyboard(activity: Activity) {
-        activity.let{ theContext->
-            theContext.currentFocus?.let {currentFocus->
-                hideKeyboard(activity)
+        activity.let{ theActivity->
+            theActivity.currentFocus?.let {currentFocus->
+                (theActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                        .hideSoftInputFromWindow(currentFocus.windowToken, 0)
             }
         }
 

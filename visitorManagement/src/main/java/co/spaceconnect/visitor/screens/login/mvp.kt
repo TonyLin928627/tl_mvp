@@ -78,6 +78,8 @@ class LoginPresenter(override val mvpView: LoginView,
     }
 
     private fun doOnSignInBtnClicked (email: String,  password: String){
+
+        mvpView.hideKeyboard(activity)
         mvpView.showAlertMsg(alertTitle = "Login Clicked", "$email, $password")
     }
 }

@@ -1,3 +1,4 @@
+include ':pinBlock'
 include ':visitorManagement'
 include ':lib'
 include ':app'
