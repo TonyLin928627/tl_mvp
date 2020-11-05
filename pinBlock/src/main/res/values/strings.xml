@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">pin block</string>
+    <string name="app_name">Pin Block Format 3</string>
     <string name="enter_pin_here">Enter a 4~12 digits pin here</string>
     <string name="pan">HARD CODED PAN:</string>
     <string name="compute">Compute</string>
     <string name="invalid_data">Invalid Data</string>
+    <string name="pin_length">Pin Length is %1$s</string>
 </resources>

@@ -1,9 +1,13 @@
-package io.tl.mvp.pinblock.screens.compute
+package io.tl.mvp.pinblock.screens.compute.mvp
 
 import android.os.Bundle
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import io.tl.mvp.lib.MvpPresenter
 import io.tl.mvp.pinblock.application.PinBlockDataBridge
+import io.tl.mvp.pinblock.screens.compute.ComputeActivity
 import io.tl.mvp.pinblock.screens.display.DisplayActivity
 
 class ComputePresenter(override val mvpView: ComputeView,
@@ -33,7 +37,10 @@ class ComputePresenter(override val mvpView: ComputeView,
 
         mvpView.hideKeyboard(activity)
 
-        mvpModel.generatePinBlockFormat3().subscribe{pinBlockComputation->
+        mvpModel.generatePinBlockFormat3()
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{pinBlockComputation->
             DisplayActivity.start(activity, pinBlockComputation)
         }.let { addDisposable(it) }
     }

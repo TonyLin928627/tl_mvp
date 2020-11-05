@@ -5,9 +5,13 @@ import android.content.Intent
 import io.tl.mvp.lib.MvpActivity
 import io.tl.mvp.pinblock.application.App
 import io.tl.mvp.pinblock.application.PinBlockDataBridge
-import io.tl.mvp.pinblock.screens.compute.PinBlockComputation
+import io.tl.mvp.pinblock.screens.compute.mvp.PinBlockComputation
 
 class DisplayActivity : MvpActivity<PinBlockDataBridge>() {
+
+    /*
+        Inject MvpPresenter and its components into the activity by Dagger.
+     */
     override var doInject = {
         DaggerDisplayComponent.builder()
             .appComponent(App.appComponent)
@@ -16,15 +20,13 @@ class DisplayActivity : MvpActivity<PinBlockDataBridge>() {
     }
 
     companion object{
-
-        internal const val TAG = "DisplayActivity"
+        internal const val TAG = "DisplayScreen"
 
         internal const val EXTRA_PIN_BYTES = "EXTRA_PIN_BYTES"
         internal const val EXTRA_PAN_BYTES = "EXTRA_PAN_BYTES"
         internal const val EXTRA_PIN_BLOCK_BYTES = "EXTRA_PIN_BLOCK_BYTES"
 
         fun start(context: Context, data: PinBlockComputation){
-
             Intent(context, DisplayActivity::class.java).let { intent ->
                 intent.putExtra(EXTRA_PIN_BYTES, data.first)
                 intent.putExtra(EXTRA_PAN_BYTES, data.second)

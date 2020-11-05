@@ -6,6 +6,9 @@ import dagger.Provides
 import io.tl.mvp.lib.MvpPresenter
 import io.tl.mvp.pinblock.application.AppComponent
 import io.tl.mvp.pinblock.application.PinBlockDataBridge
+import io.tl.mvp.pinblock.screens.compute.mvp.ComputeModel
+import io.tl.mvp.pinblock.screens.compute.mvp.ComputePresenter
+import io.tl.mvp.pinblock.screens.compute.mvp.ComputeView
 import javax.inject.Scope
 
 @Scope

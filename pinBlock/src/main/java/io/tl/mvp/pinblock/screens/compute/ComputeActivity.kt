@@ -6,6 +6,9 @@ import io.tl.mvp.pinblock.application.PinBlockDataBridge
 
 class ComputeActivity : MvpActivity<PinBlockDataBridge>() {
 
+    /*
+        Inject MvpPresenter and its components into the activity by Dagger.
+     */
     override var doInject = {
         DaggerMainComponent.builder()
             .appComponent(App.appComponent)

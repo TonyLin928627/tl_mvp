@@ -1,29 +1,22 @@
-package io.tl.mvp.pinblock.screens.compute
+package io.tl.mvp.pinblock.screens.compute.mvp
 
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.tl.mvp.lib.MvpModel
 import io.tl.mvp.pinblock.application.PinBlockDataBridge
-import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.experimental.xor
 
 class ComputeModel(dataBridge: PinBlockDataBridge): MvpModel<PinBlockDataBridge>(dataBridge) {
     private var pin: String? = null
 
-    fun getPan(): Single<String> {
-        return Single.just(dataBridge.HardCodedPan)
-    }
+    fun getPan(): Single<String> = Single.just(dataBridge.HardCodedPan)
 
-    fun getPin(): Single<String> {
-        return Single.just(pin ?: "")
-    }
+    fun getPin(): Single<String>  = Single.just(pin ?: "")
 
     fun setPin(pin: String): Completable {
         this.pin = pin
         return Completable.complete()
-
-
     }
 
     private fun generateFormat3PinField(pin: String): String{
@@ -55,7 +48,7 @@ class ComputeModel(dataBridge: PinBlockDataBridge): MvpModel<PinBlockDataBridge>
         ).replace(' ', '0'))
     }
 
-     fun generatePinBlockFormat3(pinFieldGenerator: (String)->String = this::generateFormat3PinField,
+    fun generatePinBlockFormat3(pinFieldGenerator: (String)->String = this::generateFormat3PinField,
                                  panFieldGenerator: (String)->String = this::generateFormat3PanField): Single<PinBlockComputation> {
 
          return Single.create { emitter->

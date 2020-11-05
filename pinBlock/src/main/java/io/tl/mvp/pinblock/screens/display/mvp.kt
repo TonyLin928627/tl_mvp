@@ -2,7 +2,6 @@ package io.tl.mvp.pinblock.screens.display
 
 
 import android.graphics.Color
-import android.graphics.Color.CYAN
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.*
@@ -16,8 +15,6 @@ import io.tl.mvp.lib.*
 import io.tl.mvp.pinblock.R
 import io.tl.mvp.pinblock.application.PinBlockDataBridge
 
-private const val TAG = "ComputeScreen"
-
 //region model
 class DisplayModel(dataBridge: PinBlockDataBridge): MvpModel<PinBlockDataBridge>(dataBridge) {
 
@@ -30,10 +27,9 @@ class DisplayModel(dataBridge: PinBlockDataBridge): MvpModel<PinBlockDataBridge>
         }
 
         return hexStrList
-
     }
 
-    fun generateText(pinBytes: ByteArray, panBytes: ByteArray, pinBlockBytes: ByteArray) : Single<List<String>>{
+    fun generateTextItem(pinBytes: ByteArray, panBytes: ByteArray, pinBlockBytes: ByteArray) : Single<List<String>>{
         return Single.create { emitter->
             val stringList = mutableListOf<String>()
 
@@ -73,7 +69,6 @@ class DisplayView : MvpView(){
     val onBackBtnClicked by lazy { backBtn.clickThrottle() }
 
     private val displayAdapter: DisplayAdapter  =  DisplayAdapter()
-
 
     override fun initViews() {
         super.initViews()
@@ -143,27 +138,26 @@ class DisplayPresenter(override val mvpView: DisplayView,
         )
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //read pin, pan and pin block data from the previous screen.
        activity.intent?.let { intent ->
 
            val pinBytes = intent.getByteArrayExtra(DisplayActivity.EXTRA_PIN_BYTES)
            val panBytes = intent.getByteArrayExtra(DisplayActivity.EXTRA_PAN_BYTES)
            val pinBlockBytes = intent.getByteArrayExtra(DisplayActivity.EXTRA_PIN_BLOCK_BYTES)
 
+           //Validate and populate data
            if (pinBytes == null || panBytes == null || pinBlockBytes == null){
                mvpView.showErrorMsg(R.string.invalid_data, R.string.ok){
                    activity.finish()
                }
            }else{
-               mvpModel.generateText(pinBytes, panBytes, pinBlockBytes).subscribe { items->
+               mvpModel.generateTextItem(pinBytes, panBytes, pinBlockBytes).subscribe { items->
                    mvpView.displayPinBlockComputation(items)
                }.let { addDisposable(it) }
            }
-
-
 
        }
     }

@@ -1,4 +1,4 @@
-package io.tl.mvp.pinblock.screens.compute
+package io.tl.mvp.pinblock.screens.compute.mvp
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -24,6 +24,9 @@ class ComputeView : MvpView(){
     @BindView(R.id.computeBtn)
     lateinit var submitBtn: Button
 
+    @BindView(R.id.pinLengthTv)
+    lateinit var pinLengthTv: TextView
+
     val onSubmitBtnClicked by lazy { submitBtn.clickThrottle() }
 
     val onPinReady = PublishSubject.create<Boolean>()
@@ -33,6 +36,7 @@ class ComputeView : MvpView(){
 
         ButterKnife.bind(this, screenContainer)
 
+        //set text changed listener
         pinEt.addTextChangedListener(
             object : TextWatcher {
 
@@ -46,8 +50,11 @@ class ComputeView : MvpView(){
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(editable: Editable) {
-                    var isReady = editable.trim().length in 4..12
-                    onPinReady.onNext( isReady )
+
+                    val pinLength = editable.trim().length
+                    (pinLength in 4..12).let {isReady-> onPinReady.onNext( isReady ) }
+
+                    pinLengthTv.text = String.format(getContext().getString(R.string.pin_length), pinLength)
                 }
             }
         )
